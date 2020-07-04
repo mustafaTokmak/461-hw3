@@ -5,41 +5,59 @@
 #include <string.h>
 #include<stdio.h>
 
-int page_size = 4096;
+int page_size = 32;
 void swap(int total_number_of_bytes,char *buffer,int **page_table){
     int total_number_of_pages = total_number_of_bytes / page_size;
     char temp[page_size];
     int temp_index;
-    int first_index = rand() % total_number_of_pages;
-    int second_index = rand() % total_number_of_pages;
+    int first_index =  rand() % total_number_of_pages;
+    int second_index =  rand() % total_number_of_pages;
+    
+    //TODO check same 
+    if(first_index == second_index){
+        second_index = rand() % total_number_of_pages;
+    }
+
+    //printf("%d\n",page_table[first_index]);
+    //printf("%d\n",page_table[second_index]);
 
     
-    int *temp_add = page_table[first_index];
-    page_table[first_index] = page_table[second_index];
+    //printf("\n%d\n",page_table[first_index]);
+    //printf("%d\n",page_table[second_index]);
+
+
+    char *temp_add;
+    temp_add = page_table[first_index];
+
+
+    for(int i=0; i < page_size; i++){
+        //temp[i] = buffer[first_index*pa+ge_size+i];
+        temp[i] = *((char*)page_table[first_index]+i);
+        printf("%c",temp[i]);
+    }   
+    printf("\n\n");
+    for(int i=0; i < page_size; i++){
+        //buffer[first_index*page_size+i] = buffer[second_index*page_size+i];
+        *((char*)page_table[first_index]+i) = *((char*)page_table[second_index]+i);
+        printf("%c",*((char*)page_table[first_index]+i));
+    }
+        page_table[first_index] = page_table[second_index];  
+
+    printf("\n\n");
+    for(int i=0; i < page_size; i++){
+        //buffer[second_index*page_size+i] = temp[i];
+        *((char*)page_table[second_index]+i)= temp[i];
+        printf("%c",*((char*)page_table[second_index]+i));
+    }
+    printf("\n\n");
     page_table[second_index] = temp_add;
 
-
-
-    for(int i=0; i < page_size; i++){
-        temp[i] = buffer[first_index*page_size+i];
-    }
-
-    for(int i=0; i < page_size; i++){
-        buffer[first_index*page_size+i] = buffer[second_index*page_size+i];
-    }
-
-    for(int i=0; i < page_size; i++){
-        buffer[second_index*page_size+i] = temp[i];
-    }
-   
-    for(int i=0; i < page_size; i++){
-        temp[i] = buffer[first_index*page_size+i];
-    }
-}
+}   
 
 void create_read_list(){
     return;
 }
+
 void print_page_table(int **page_table,int total_number_of_pages){
 
     for(int i=0; i < total_number_of_pages; i++){
@@ -126,9 +144,9 @@ main() {
     printf("total_number_of_bytes %d\n",total_number_of_bytes);
     printf("total_number_of_pages %d\n",total_number_of_pages);
     
-    page_table = malloc(total_number_of_pages * sizeof(char*));
+    //page_table = malloc(total_number_of_pages * sizeof(char*));
     for(int i=0; i < total_number_of_pages; i++){
-        page_table[i] = arr + (i*page_size);
+        page_table[i] = &arr[i*page_size];
     }
     printf("\n");
     print_page_table(page_table,total_number_of_pages);
@@ -137,36 +155,44 @@ main() {
     int index = 0;
     int page_no = index / page_size;
     char *address;
-    
-    address = page_table[page_no]+index;
+    address =     (char*)page_table[page_no]+index;
     printf("%d\n", address);
-    printf("address arr :  %c \n",*arr);
+    printf("address arr :  %c \n",*address);
     //char value = *(char*)address;
-    char value = "a";
-    printf("page arr :  %c \n",value );
     
-    
-
-    for(int i=0; i < 100;i++){
+    index = 0;
+    for(int i=0; i < 32; i++){
+        address = (char*)page_table[page_no]+i;
         index = index + i;
-        address = page_table[page_no] + index; 
-        //char* pointer = address;
-        //printf("%d", *pointer );
-
+        printf("%c",*address);    
     }
-    
-        
+    printf("\n\n");
+
+    index = 0;
+    for(int i=0; i < 32; i++){
+        address = (char*)page_table[page_no]+i;
+        printf("%d ",address);    
+    }
+    printf("\n\n");
+
     for(int i=0; i < 100; i++){
         swap(numbytes,arr,page_table);
     }
-    
-    address = page_table[page_no]+index;
-    printf("%d\n", address);
-    printf("address arr :  %c \n",*arr);
+
+    index = 0;
+    for(int i=0; i < 32; i++){
+
+        address = (char*)page_table[page_no]+i;
+        printf("%c",*address);    
+    }
+        printf("\n\n");
 
     
-
-
+    
+    address =(char*)page_table[page_no]+index;
+    
+    
+    
     print_page_table(page_table,total_number_of_pages);
     
 
