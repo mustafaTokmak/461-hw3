@@ -3,17 +3,20 @@
 
 int main()
 {
-    int i,j;
+    char *str;
 
-    char *p = malloc(6 * sizeof(char));
-    p[0] = "a";
-    p[1] = "b";
-    p[2] = "c";
-    p[3] = "d";
-    p[4] = "e";
-    p[5] = "f";
+    /* Initial memory allocation */
+    str = (char *) malloc(15);
+    strcpy(str, "tutorialspoint");
+    char** a = str;
+    printf("Address = %d\n",a); 
+    printf("String = %s\n",a);
+    
+    printf("String = %s,  Address = %d\n", str, str);
 
 
-    printf("%c %d\n", p, &i);
+
+
+
     return 0;
 }
