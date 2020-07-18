@@ -1,0 +1,9 @@
+175-198 satırları arası password.txt okunup memory'e yükleniyor.
+202-214 satırları arası erişilecek virtual adressler access.txt file'ından okunuyor.
+219-228 satırları arası memory'e yüklenen password file'ı nın yüklendiği memory addressleri pagelere bölünerek pagetable a yazılıyor.
+230. satırda page table'ın ilk hali ekrana basılıyor.
+232-234 satırları arası 100 kez swap yapılıyor.
+235. satırda page table'ın swap sonrası hali ekrana basılıyor.
+241-256 satırları arası access.txt file'ından okunmuş adresslere erişiliyor.
+hit miss değerleri belirlenip ekrana basılıyor.
+

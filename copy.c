@@ -1,6 +1,6 @@
-//#include <stdlib.h> 
+#include <stdlib.h> 
 //#include<time.h> 
-//#include <string.h>
+#include <string.h>
 //#include <stdint.h>
 #include <stdio.h>
 
@@ -170,58 +170,50 @@ int update_tlb(int tlb_index,char **tlb ,char* page_address){
 
 main() {
 
-    srand(time(0)); 
-    int access[100];
-    access[1]=0;
-    for(int i=0;i<100;i++){
-        access[i] = rand()% 280;
-
-    }
+    
  
     FILE    *infile;
-        char    *buffer;
+    char    *buffer;
     long    numbytes;
     
     
-    /* open an existing file for reading */
     infile = fopen("password.txt", "r");
     
-    /* quit if the file does not exist */
     if(infile == NULL)
         return 1;
     
-    /* Get the number of bytes */
     fseek(infile, 0L, SEEK_END);
     numbytes = ftell(infile);
     
     if( numbytes % page_size != 0 ){
         numbytes = ((numbytes / page_size) + 1) * page_size;
     }
-    /* reset the file position indicator to 
-    the beginning of the file */
     fseek(infile, 0L, SEEK_SET);	
     
-    /* grab sufficient memory for the 
-    buffer to hold the text */
     buffer = calloc(numbytes, sizeof(char));	
     
-    /* memory error */
     if(buffer == NULL)
         return 1;
     
-    /* copy all the text into the buffer */
-    fread(buffer, sizeof(char), numbytes, infile);
-    
-    char *arr;
-    arr = malloc(numbytes * sizeof(char));
-    for(int i=0; i<numbytes;i++){
-        arr[i] = buffer[i];
-    }
+    fread(buffer, sizeof(char), numbytes, infile);   
 
-    /* confirm we have read the file by
-    outputing it to the console */
-    //printf("The file called test.dat contains this text\n\n%d\n", sizeof(char) );
+
+    srand(time(0)); 
+    int access[1000];
     
+    int counter = 0;
+    FILE *fp;
+    char buff[255];
+
+    fp = fopen("access.txt", "r");
+    for(int i=1;i<1000;i++){
+        fgets(buff, 255, (FILE*)fp);
+        int a = atoi(buff);
+        access[i] = a;
+    }
+    fclose(fp);
+    
+
 
 
     char **page_table;
@@ -230,13 +222,13 @@ main() {
     printf("total_number_of_bytes %d\n",total_number_of_bytes);
     printf("total_number_of_pages %d\n",total_number_of_pages);
     
-    //page_table = malloc(total_number_of_pages * sizeof(char*));
+    page_table = malloc(total_number_of_pages * sizeof(char*));
     for(int i=0; i < total_number_of_pages; i++){
         page_table[i] = &buffer[i*page_size];
     }
     printf("\n");
     print_page_table(page_table,total_number_of_pages);
-        printf("\n");
+    printf("\n");
 
     int second_index = total_number_of_pages-1;
     
@@ -244,9 +236,6 @@ main() {
     int page_no = index / page_size;
     char *address;
     address =(char*)page_table[page_no]+index;
-//    printf("%d\n", address);
-  //  printf("address arr :  %c \n",*address);
-    //char value = *(char*)address;
     
     index = 0;
     for(int i=0; i < 32; i++){
@@ -280,22 +269,6 @@ main() {
     int hit =0;
     int miss = 0;
     int tlb_index;
-    for(int i=0;i<100;i++){
-        int page_no =  access[i] / page_size;
-        char *page_address = (char*)page_table[page_no];
-        
-        tlb_index = get_tlb_index(tlb,page_address);
-        if(tlb_index > -1){
-            hit++;
-        }
-        else{
-            miss++;
-        }
-        update_tlb( tlb_index,tlb ,page_address);        
-        
-        
-
-    }
     for(int i=0;i<1000;i++){
         printf("accessed virtual address: %d\n",access[i]);
         int page_no =  access[i] / page_size;
@@ -314,11 +287,6 @@ main() {
     }
     printf("hit :%d\n",hit);
     printf("miss :%d\n",miss);
-    printf("hit :%d\n",hit);
-    printf("miss :%d\n",miss);
     
     exit(0);
-
-
-
 }
