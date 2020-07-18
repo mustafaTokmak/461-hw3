@@ -14,7 +14,7 @@ int head=-1;
 int tail=-1;
 int size=0;
 
-int page_size = 32;
+int page_size = 8;
 void swap(int total_number_of_bytes,char *buffer,char **page_table){
     int total_number_of_pages = total_number_of_bytes / page_size;
     char temp[page_size];
@@ -109,17 +109,17 @@ int dequeue(){
 }
 
 
-int update_tlb(int tlb_index,char **tlb ,char* address){
+int update_tlb(int tlb_index,char **tlb ,char* page_address){
 
     int index;
     if(tlb_index == -1){
         if(tlb_queue_size<10){
-            printf("tlb_queue_size :%d\n",tlb_queue_size);
-            tlb[tlb_queue_size] = address;
+            //printf("tlb_queue_size :%d\n",tlb_queue_size);
+            tlb[tlb_queue_size] = page_address;
             tlb_queue[tlb_queue_size] = tlb_queue_size;
             tlb_queue_size++;
             for(int i = 0;i<tlb_queue_size;i++){
-                printf("tlb_queue[%d] : %d\n",i,tlb_queue[i]);
+                //printf("tlb_queue[%d] : %d\n",i,tlb_queue[i]);
             }
         }
         else{
@@ -132,12 +132,12 @@ int update_tlb(int tlb_index,char **tlb ,char* address){
             for(int i = 0;i<tlb_queue_size;i++){
                 tlb_queue[i+1] = temp_queue[i];
             }
-            tlb[tlb_queue[0]] = address;
+            tlb[tlb_queue[0]] = page_address;
             for(int i = 0;i<tlb_queue_size;i++){
-                printf("tlb_queue[%d] : %d\n",i,tlb_queue[i]);
+                //printf("tlb_queue[%d] : %d\n",i,tlb_queue[i]);
             }
             //printf("tlb_queue[0] : %d\n",tlb_queue[0]);
-            printf("tlb[tlb_queue[0]] : %d\n",tlb[tlb_queue[0]]);
+            //printf("tlb[tlb_queue[0]] : %d\n",tlb[tlb_queue[0]]);
 
 
             
@@ -282,15 +282,12 @@ main() {
 
     int hit =0;
     int miss = 0;
-    char *page_address;
-
+    int tlb_index;
     for(int i=0;i<100;i++){
-        int index = access[i] % page_size;
         int page_no =  access[i] / page_size;
-        address =(char*)page_table[page_no]+index;
-        page_address = (char*)page_table[page_no];
+        char *page_address = (char*)page_table[page_no];
         
-        int tlb_index = get_tlb_index(tlb,page_address);
+        tlb_index = get_tlb_index(tlb,page_address);
         if(tlb_index > -1){
             hit++;
         }
@@ -298,10 +295,7 @@ main() {
             miss++;
         }
         update_tlb( tlb_index,tlb ,page_address);        
-        for(int i = 0;i<tlb_queue_size;i++){
-            printf("%d \n",tlb[0]);
-        }
-        printf("\n\n");
+        
         
 
     }
